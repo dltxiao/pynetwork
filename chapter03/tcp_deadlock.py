@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import argparse, socket sys
+import argparse, socket, sys
 
 def server(host, port, bytecount):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
