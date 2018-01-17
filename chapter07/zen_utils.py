@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
+#coding=utf-8
 
-import argparse, socket, time 
+import argparse, socket, time
 
 aphorisms = {b'Beautiful is better than?': b'Ugly.',
 			 b'Explicit is better than?': b'Implicit.',
 			 b'Simple is better than?': b'Complex.'}
 
+# 传入key，返回value
 def get_answer(aphorism):
 	"""Return the string response to a particular Zen-of-Python aphorism."""
 	time.sleep(0.0) # increase to simulate an expensive operation
 	return aphorisms.get(aphorism, b'Error: unknown aphorism.')
 
+# 传入不同的description，返回由host和port组成的address
 def parse_command_line(description):
 	"""Parse command line and return a socket address."""
 	parser = argparse.ArgumentParser(description=description)
@@ -20,6 +23,7 @@ def parse_command_line(description):
 	address = (args.host, args.p)
 	return address
 
+# 传入address，返回监听套接字
 def create_srv_socket(address):
 	"""Build and return a listening server socket."""
 	listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -29,18 +33,20 @@ def create_srv_socket(address):
 	print('Listening at {}'.format(address))
 	return listener
 
+#传入监听套接字，进入listener.accept()循环
 def accept_connections_forever(listener):
 	"""Forever answer incoming connections on a listening socket."""
 	while True:
 		sock, address = listener.accept()
 		print('Accepted connection from {}'.format(address))
+                # accept返回新套接字和客户端地址后，由handle_conversation函数来处理。
 		handle_conversation(sock, address)
 
 def handle_conversation(sock, address):
 	"""Converse with a client over `sock` until they are done talking."""
 	try:
 		while True:
-			handle_request(sock)
+			handle_request(sock) #调用handle_request处理新套接字
 	except EOFError:
 		print('Client socket to {} has closed'.format(address))
 	except Exception as e:
@@ -50,10 +56,11 @@ def handle_conversation(sock, address):
 
 def handle_request(sock):
 	"""Receive a single client request on `sock` and send the answer."""
-	aphorism = recv_until(sock, b'?')
-	answer = get_answer(aphorism)
+	aphorism = recv_until(sock, b'?') #调用recv_util()接受客户端发送的数据
+	answer = get_answer(aphorism) #根据客户端消息获取返回内容
 	sock.sendall(answer)
 
+# 传入新套接字和封帧符号，接受客户端传输的数据并返回
 def recv_until(sock, suffix):
 	"""Receive bytes of over socket `sock` until we receive the `suffix`."""
 	message = sock.recv(4096)

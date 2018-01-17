@@ -7,7 +7,8 @@ def client(address, cause_error=False):
 	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	sock.connect(address)
         # 对字典对象使用list函数，返回一个由全部key组成的列表
-	aphorisms = list(zen_utils.aphorisms)
+	"""
+        aphorisms = list(zen_utils.aphorisms)
 	if cause_error:
                 # 故意发送空字符串触发一个错误
 		sock.sendall(aphorisms[0][:-1])
@@ -16,6 +17,7 @@ def client(address, cause_error=False):
 		sock.sendall(aphorism)
 		print(aphorism, zen_utils.recv_until(sock, b'.'))
 	sock.close()
+        """
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='Example client')
